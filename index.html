@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic Maturité Automatisation — PME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16324F;
+    --ink-soft:#3D5570;
+    --paper:#F7F8F6;
+    --card:#FFFFFF;
+    --flux:#0E9F8A;
+    --flux-soft:#E2F3F0;
+    --line:#DDE3E0;
+    --alert:#C4552A;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+
+  /* ---------- Header ---------- */
+  header{margin-bottom:28px}
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--flux);font-weight:600;margin-bottom:10px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.6rem,4.5vw,2.2rem);
+    line-height:1.15;font-weight:700;
+  }
+  .intro{color:var(--ink-soft);margin-top:12px;font-size:.98rem;max-width:56ch}
+  .intro strong{color:var(--ink)}
+
+  /* ---------- Rampe de progression (signature) ---------- */
+  .rail{
+    display:flex;align-items:flex-start;gap:0;
+    margin:34px 0 30px;
+  }
+  .station{flex:1;position:relative;text-align:center}
+  .station .dot{
+    width:14px;height:14px;border-radius:50%;
+    background:var(--card);border:2px solid var(--line);
+    margin:0 auto 8px;position:relative;z-index:2;
+    transition:all .3s ease;
+  }
+  .station .lbl{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;
+  }
+  .station::before{
+    content:"";position:absolute;top:6px;left:-50%;width:100%;height:2px;
+    background:var(--line);z-index:1;
+  }
+  .station:first-child::before{display:none}
+  .station.active .dot{border-color:var(--flux);background:var(--flux-soft)}
+  .station.done .dot{border-color:var(--flux);background:var(--flux)}
+  .station.done::before,.station.active::before{background:var(--flux)}
+  .station.done .lbl,.station.active .lbl{color:var(--ink)}
+
+  .progress-txt{
+    font-size:.82rem;color:var(--ink-soft);text-align:center;margin-bottom:22px;
+  }
+  .progress-txt b{color:var(--flux)}
+
+  /* ---------- Carte question ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px 26px;
+    box-shadow:0 1px 3px rgba(22,50,79,.05);
+  }
+  .axe-tag{
+    display:inline-block;font-family:'Space Grotesk',sans-serif;
+    font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--flux);background:var(--flux-soft);
+    padding:4px 10px;border-radius:999px;margin-bottom:14px;
+  }
+  .q-text{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.15rem;font-weight:600;line-height:1.35;margin-bottom:20px;
+  }
+  .opt{
+    display:block;width:100%;text-align:left;
+    background:var(--paper);border:1.5px solid var(--line);
+    border-radius:10px;padding:14px 16px;margin-bottom:10px;
+    font-family:'Inter',sans-serif;font-size:.95rem;color:var(--ink);
+    cursor:pointer;transition:border-color .15s,background .15s;
+  }
+  .opt:hover{border-color:var(--flux)}
+  .opt:focus-visible{outline:3px solid var(--flux);outline-offset:2px}
+  .opt.selected{border-color:var(--flux);background:var(--flux-soft);font-weight:500}
+
+  .nav{display:flex;justify-content:space-between;margin-top:22px;gap:12px}
+  .btn{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.92rem;
+    border-radius:10px;padding:12px 22px;cursor:pointer;
+    border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);
+    transition:all .15s;
+  }
+  .btn:focus-visible{outline:3px solid var(--flux);outline-offset:2px}
+  .btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn.primary:hover{background:#0F2438}
+  .btn.primary:disabled{opacity:.35;cursor:not-allowed}
+  .btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
+
+  /* ---------- Formulaire contact ---------- */
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px}
+  .field input{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);
+    border-radius:10px;font-family:'Inter',sans-serif;font-size:.95rem;
+    background:var(--paper);color:var(--ink);
+  }
+  .field input:focus{outline:none;border-color:var(--flux)}
+  .hint{font-size:.78rem;color:var(--ink-soft);margin-top:4px}
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:18px 0;font-size:.85rem;color:var(--ink-soft)}
+  .consent input{margin-top:3px;accent-color:var(--flux)}
+  .error-msg{color:var(--alert);font-size:.85rem;margin-top:10px;display:none}
+
+  /* ---------- Écran final ---------- */
+  .final{text-align:center;padding:20px 0}
+  .final .check{
+    width:58px;height:58px;border-radius:50%;background:var(--flux);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+  }
+  .final .check svg{width:28px;height:28px;stroke:#fff;stroke-width:3;fill:none}
+  .final h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:10px}
+  .final p{color:var(--ink-soft);max-width:44ch;margin:0 auto}
+
+  .hidden{display:none}
+
+  footer{
+    margin-top:40px;text-align:center;font-size:.78rem;color:var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+    html{scroll-behavior:auto}
+  }
+  @media (max-width:480px){
+    .card{padding:22px 18px}
+    .station .lbl{font-size:.58rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Diagnostic express · 5 minutes</div>
+    <h1>Où en est votre entreprise sur l'automatisation&nbsp;?</h1>
+    <p class="intro">22 questions rapides. À la clé&nbsp;: votre <strong>score de maturité</strong>, votre profil, et <strong>3 recommandations personnalisées</strong> envoyées par email. Aucune réponse n'est bonne ou mauvaise&nbsp;: répondez tel que c'est aujourd'hui.</p>
+  </header>
+
+  <div class="rail" id="rail" aria-hidden="true">
+    <div class="station" data-axe="0"><div class="dot"></div><div class="lbl">Process</div></div>
+    <div class="station" data-axe="1"><div class="dot"></div><div class="lbl">Outils</div></div>
+    <div class="station" data-axe="2"><div class="dot"></div><div class="lbl">Culture</div></div>
+    <div class="station" data-axe="3"><div class="dot"></div><div class="lbl">Enjeux</div></div>
+    <div class="station" data-axe="4"><div class="dot"></div><div class="lbl">Contact</div></div>
+  </div>
+
+  <p class="progress-txt" id="progressTxt"></p>
+
+  <!-- Carte question -->
+  <div class="card" id="qCard">
+    <span class="axe-tag" id="axeTag"></span>
+    <p class="q-text" id="qText"></p>
+    <div id="opts"></div>
+    <div class="nav">
+      <button class="btn ghost" id="btnPrev" type="button">Précédent</button>
+      <button class="btn primary" id="btnNext" type="button" disabled>Suivant</button>
+    </div>
+  </div>
+
+  <!-- Carte contact -->
+  <div class="card hidden" id="contactCard">
+    <span class="axe-tag">Dernière étape</span>
+    <p class="q-text">Où envoyer votre rapport personnalisé&nbsp;?</p>
+    <div class="field">
+      <label for="fName">Prénom et nom</label>
+      <input id="fName" type="text" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="fCompany">Entreprise</label>
+      <input id="fCompany" type="text" autocomplete="organization">
+    </div>
+    <div class="field">
+      <label for="fEmail">Email professionnel</label>
+      <input id="fEmail" type="email" autocomplete="email">
+      <p class="hint">Le rapport arrive dans votre boîte sous quelques minutes.</p>
+    </div>
+    <div class="consent">
+      <input type="checkbox" id="fConsent">
+      <label for="fConsent">J'accepte de recevoir mon rapport de diagnostic par email. Mes réponses ne sont utilisées que pour produire ce rapport.</label>
+    </div>
+    <p class="error-msg" id="errMsg"></p>
+    <div class="nav">
+      <button class="btn ghost" id="btnBackQ" type="button">Précédent</button>
+      <button class="btn primary" id="btnSubmit" type="button">Recevoir mon rapport</button>
+    </div>
+  </div>
+
+  <!-- Écran final -->
+  <div class="card hidden" id="finalCard">
+    <div class="final">
+      <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 13 10 19 20 6"/></svg></div>
+      <h2>Diagnostic envoyé</h2>
+      <p>Merci&nbsp;! Votre rapport personnalisé est en cours de génération et arrive par email d'ici quelques minutes. Pensez à vérifier vos courriers indésirables.</p>
+    </div>
+  </div>
+
+  <footer>Diagnostic conçu et opéré par Bruyère · Conseil AMOA &amp; automatisation IA</footer>
+</div>
+
+<script>
+/* ================= CONFIGURATION ================= */
+const WEBHOOK_URL = "REMPLACER_PAR_URL_WEBHOOK_MAKE"; // ex: https://hook.eu2.make.com/xxxx
+
+/* ================= DONNÉES ================= */
+const AXES = [
+  {id:"process", label:"Axe 1 · Process", max:30},
+  {id:"outils", label:"Axe 2 · Outils & données", max:30},
+  {id:"culture", label:"Axe 3 · Culture & appétit", max:25},
+  {id:"business", label:"Axe 4 · Enjeu business", max:25}
+];
+
+const QUESTIONS = [
+ // AXE 1 — PROCESS
+ {axe:0,id:"q1",text:"À quelle fréquence votre équipe réalise-t-elle des tâches répétitives (saisies, relances, reporting, classement…) ?",
+  opts:[["Rarement, quelques fois par mois",1],["Chaque semaine",3],["Tous les jours",5]]},
+ {axe:0,id:"q2",text:"Ces tâches se déroulent-elles toujours de la même façon ?",
+  opts:[["Non, chaque cas est différent",1],["En partie : un tronc commun avec des exceptions",3],["Oui, le déroulé est quasiment identique à chaque fois",5]]},
+ {axe:0,id:"q3",text:"Vos process clés sont-ils documentés (procédure écrite, check-list, mode opératoire) ?",
+  opts:[["Non, tout est dans la tête des gens",1],["Partiellement, quelques documents pas toujours à jour",3],["Oui, l'essentiel est écrit et suivi",5]]},
+ {axe:0,id:"q4",text:"Que se passe-t-il si la personne qui gère une tâche clé est absente ?",
+  opts:[["Tout s'arrête ou prend beaucoup de retard",1],["Quelqu'un peut dépanner, avec difficulté",3],["Un remplaçant peut reprendre facilement",5]]},
+ {axe:0,id:"q5",text:"Vos équipes font-elles du copier-coller d'informations entre plusieurs outils ?",
+  opts:[["Oui, en permanence",1],["De temps en temps",3],["Presque jamais",5]]},
+ {axe:0,id:"q6",text:"Quel volume de documents ou dossiers traitez-vous manuellement chaque mois (factures, commandes, demandes clients…) ?",
+  opts:[["Moins de 50",1],["Entre 50 et 300",3],["Plus de 300",5]]},
+
+ // AXE 2 — OUTILS & DONNÉES
+ {axe:1,id:"q7",text:"Où sont stockées vos données de travail au quotidien ?",
+  opts:[["Fichiers locaux, clés USB, disques partagés",1],["Un mix de fichiers locaux et d'outils en ligne",3],["Essentiellement dans des outils cloud",5]]},
+ {axe:1,id:"q8",text:"Utilisez-vous Microsoft 365 ou Google Workspace ?",
+  opts:[["Non",1],["Oui, mais seulement mail et bureautique",3],["Oui, avec un usage avancé (espaces partagés, formulaires, petites automatisations)",5]]},
+ {axe:1,id:"q9",text:"Avez-vous un CRM ?",
+  opts:[["Non, tout est dans Excel ou dans les mails",1],["Oui, mais mal ou peu alimenté",3],["Oui, alimenté et utilisé par l'équipe",5]]},
+ {axe:1,id:"q10",text:"Vos données clients et fournisseurs sont-elles centralisées ?",
+  opts:[["Éparpillées dans plusieurs fichiers et boîtes mail",1],["Partiellement centralisées",3],["Centralisées dans un outil de référence",5]]},
+ {axe:1,id:"q11",text:"Vous arrive-t-il de saisir la même information dans plusieurs outils ?",
+  opts:[["Oui, systématiquement",1],["Parfois",3],["Non, la saisie est unique",5]]},
+ {axe:1,id:"q12",text:"Vos outils communiquent-ils entre eux (connexions, synchronisations, exports automatiques) ?",
+  opts:[["Non, aucun",1],["Quelques connexions existent",3],["Oui, plusieurs outils sont déjà connectés",5]]},
+
+ // AXE 3 — CULTURE & APPÉTIT
+ {axe:2,id:"q13",text:"Comment votre équipe réagit-elle aux changements d'outils ou de méthodes ?",
+  opts:[["Forte résistance",1],["Neutre, ça dépend du sujet",3],["Plutôt demandeuse d'amélioration",5]]},
+ {axe:2,id:"q14",text:"Utilisez-vous déjà des outils d'IA (ChatGPT, Copilot, Claude…) dans votre activité ?",
+  opts:[["Non, jamais",1],["Quelques usages individuels, non organisés",3],["Oui, avec des usages réguliers voire encadrés",5]]},
+ {axe:2,id:"q15",text:"Y a-t-il en interne une personne qui pourrait piloter un projet d'automatisation ?",
+  opts:[["Non, personne",1],["Oui, mais déjà très chargée",3],["Oui, identifiée et disponible",5]]},
+ {axe:2,id:"q16",text:"Avez-vous déjà tenté d'automatiser quelque chose (macro, Zapier, script…) ?",
+  opts:[["Non, jamais",1],["Oui, sans grand succès",3],["Oui, avec au moins un résultat concret",5]]},
+ {axe:2,id:"q17",text:"La direction est-elle sponsor d'une démarche d'amélioration ou d'automatisation ?",
+  opts:[["Pas vraiment un sujet",1],["Intéressée mais pas prioritaire",3],["Oui, c'est une volonté affirmée",5]]},
+
+ // AXE 4 — ENJEU BUSINESS
+ {axe:3,id:"q18",text:"Combien d'heures par semaine estimez-vous perdues en tâches manuelles répétitives (toute l'équipe confondue) ?",
+  opts:[["Moins de 5 heures",1],["Entre 5 et 20 heures",3],["Plus de 20 heures",5]]},
+ {axe:3,id:"q19",text:"Ces tâches manuelles freinent-elles votre croissance (délais, capacité à absorber plus de clients…) ?",
+  opts:[["Non, pas vraiment",1],["Un peu, par moments",3],["Oui, clairement",5]]},
+ {axe:3,id:"q20",text:"Avez-vous constaté des erreurs coûteuses liées à des traitements manuels (oubli, double saisie, erreur de montant…) ?",
+  opts:[["Non",1],["Oui, occasionnellement",3],["Oui, régulièrement",5]]},
+ {axe:3,id:"q21",text:"Où en êtes-vous côté budget pour un projet d'automatisation ?",
+  opts:[["Purement exploratoire, pas de budget",1],["Une enveloppe est envisageable si le ROI est démontré",3],["Un budget est alloué",5]]},
+ {axe:3,id:"q22",text:"À quel horizon souhaitez-vous agir ?",
+  opts:[["Pas de calendrier, simple curiosité",1],["Dans les 6 à 12 mois",3],["Dans les 3 prochains mois",5]]}
+];
+
+/* ================= ÉTAT ================= */
+let current = 0;
+const answers = new Array(QUESTIONS.length).fill(null); // index de l'option choisie
+
+/* ================= ÉLÉMENTS ================= */
+const qCard = document.getElementById("qCard");
+const contactCard = document.getElementById("contactCard");
+const finalCard = document.getElementById("finalCard");
+const axeTag = document.getElementById("axeTag");
+const qText = document.getElementById("qText");
+const optsDiv = document.getElementById("opts");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const progressTxt = document.getElementById("progressTxt");
+
+/* ================= RENDU ================= */
+function render(){
+  const q = QUESTIONS[current];
+  axeTag.textContent = AXES[q.axe].label;
+  qText.textContent = q.text;
+  optsDiv.innerHTML = "";
+  q.opts.forEach((o,i)=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "opt" + (answers[current]===i ? " selected":"");
+    b.textContent = o[0];
+    b.addEventListener("click",()=>{
+      answers[current]=i;
+      render();
+      setTimeout(next, 220); // enchaînement fluide après sélection
+    });
+    optsDiv.appendChild(b);
+  });
+  btnPrev.style.visibility = current===0 ? "hidden":"visible";
+  btnNext.disabled = answers[current]===null;
+  progressTxt.innerHTML = "Question <b>"+(current+1)+"</b> / "+QUESTIONS.length;
+  updateRail(QUESTIONS[current].axe);
+}
+
+function updateRail(activeAxe){
+  document.querySelectorAll(".station").forEach(s=>{
+    const a = parseInt(s.dataset.axe,10);
+    s.classList.toggle("done", a < activeAxe);
+    s.classList.toggle("active", a === activeAxe);
+  });
+}
+
+function next(){
+  if(answers[current]===null) return;
+  if(current < QUESTIONS.length-1){ current++; render(); }
+  else showContact();
+}
+function prev(){ if(current>0){ current--; render(); } }
+
+btnNext.addEventListener("click",next);
+btnPrev.addEventListener("click",prev);
+
+/* ================= CONTACT ================= */
+function showContact(){
+  qCard.classList.add("hidden");
+  contactCard.classList.remove("hidden");
+  progressTxt.textContent = "Dernière étape";
+  updateRail(4);
+  window.scrollTo({top:0});
+}
+document.getElementById("btnBackQ").addEventListener("click",()=>{
+  contactCard.classList.add("hidden");
+  qCard.classList.remove("hidden");
+  render();
+});
+
+/* ================= SCORING ================= */
+function computeScores(){
+  const axeScores = AXES.map(()=>0);
+  const detail = {};
+  QUESTIONS.forEach((q,i)=>{
+    const pts = q.opts[answers[i]][1];
+    axeScores[q.axe] += pts;
+    detail[q.id] = {question:q.text, reponse:q.opts[answers[i]][0], points:pts};
+  });
+  const total110 = axeScores.reduce((a,b)=>a+b,0);
+  const total100 = Math.round(total110*100/110);
+
+  let profil;
+  if(total100 < 40) profil = "Débutant à structurer";
+  else if(total100 < 60) profil = "Équipé mais dispersé";
+  else if(total100 < 80) profil = "Prêt à automatiser";
+  else profil = "Prêt à passer à l'échelle";
+
+  const q21pts = QUESTIONS[20].opts[answers[20]][1];
+  const q22pts = QUESTIONS[21].opts[answers[21]][1];
+  const leadChaud = (total100 >= 60) && (q21pts >= 3) && (q22pts === 5);
+
+  return {
+    score_global: total100,
+    scores_axes: {
+      process:{score:axeScores[0], max:30},
+      outils:{score:axeScores[1], max:30},
+      culture:{score:axeScores[2], max:25},
+      business:{score:axeScores[3], max:25}
+    },
+    profil, lead_chaud: leadChaud, reponses: detail
+  };
+}
+
+/* ================= ENVOI ================= */
+document.getElementById("btnSubmit").addEventListener("click", async ()=>{
+  const name = document.getElementById("fName").value.trim();
+  const company = document.getElementById("fCompany").value.trim();
+  const email = document.getElementById("fEmail").value.trim();
+  const consent = document.getElementById("fConsent").checked;
+  const err = document.getElementById("errMsg");
+
+  if(!name || !company || !email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    err.textContent = "Merci de renseigner votre nom, votre entreprise et un email valide.";
+    err.style.display = "block"; return;
+  }
+  if(!consent){
+    err.textContent = "Merci de cocher la case pour recevoir votre rapport.";
+    err.style.display = "block"; return;
+  }
+  err.style.display = "none";
+
+  const payload = {
+    horodatage: new Date().toISOString(),
+    contact:{nom:name, entreprise:company, email:email},
+    ...computeScores()
+  };
+
+  const btn = document.getElementById("btnSubmit");
+  btn.disabled = true; btn.textContent = "Envoi en cours…";
+
+  try{
+    const r = await fetch(WEBHOOK_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    contactCard.classList.add("hidden");
+    finalCard.classList.remove("hidden");
+    document.querySelectorAll(".station").forEach(s=>{s.classList.remove("active");s.classList.add("done");});
+    progressTxt.textContent = "";
+  }catch(e){
+    btn.disabled = false; btn.textContent = "Recevoir mon rapport";
+    err.textContent = "L'envoi a échoué. Vérifiez votre connexion et réessayez — vos réponses sont conservées.";
+    err.style.display = "block";
+  }
+});
+
+render();
+</script>
+</body>
+</html>

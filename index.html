@@ -99,7 +99,9 @@
     font-family:'Inter',sans-serif;font-size:.95rem;color:var(--ink);
     cursor:pointer;transition:border-color .15s,background .15s;
   }
-  .opt:hover{border-color:var(--flux)}
+  @media (hover: hover) and (pointer: fine){
+    .opt:hover{border-color:var(--flux)}
+  }
   .opt:focus-visible{outline:3px solid var(--flux);outline-offset:2px}
   .opt.selected{border-color:var(--flux);background:var(--flux-soft);font-weight:500}
 
@@ -112,10 +114,11 @@
   }
   .btn:focus-visible{outline:3px solid var(--flux);outline-offset:2px}
   .btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
-  .btn.primary:hover{background:#0F2438}
+  @media (hover: hover) and (pointer: fine){
+    .btn.primary:hover{background:#0F2438}
+    .btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
+  }
   .btn.primary:disabled{opacity:.35;cursor:not-allowed}
-  .btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
-
   /* ---------- Formulaire contact ---------- */
   .field{margin-bottom:16px}
   .field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px}

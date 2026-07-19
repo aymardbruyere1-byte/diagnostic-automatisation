@@ -148,6 +148,11 @@
   footer{
     margin-top:40px;text-align:center;font-size:.78rem;color:var(--ink-soft);
   }
+  .rgpd{margin-top:14px;text-align:left;max-width:56ch;margin-left:auto;margin-right:auto}
+  .rgpd summary{cursor:pointer;color:var(--flux);font-weight:600;text-align:center;list-style-position:inside}
+  .rgpd summary:focus-visible{outline:3px solid var(--flux);outline-offset:2px}
+  .rgpd p{margin-top:10px;font-size:.75rem;color:var(--ink-soft);line-height:1.6}
+  .rgpd a{color:var(--flux)}
 
   @media (prefers-reduced-motion:reduce){
     *{transition:none!important}
@@ -226,7 +231,13 @@
     </div>
   </div>
 
-  <footer>Diagnostic conçu et opéré par Bruyère · Conseil AMOA &amp; automatisation IA</footer>
+ <footer>
+    Diagnostic conçu et opéré par Bruyère · Conseil AMOA &amp; automatisation IA
+    <details class="rgpd">
+      <summary>Protection de vos données</summary>
+      <p>Les informations recueillies (nom, entreprise, email, réponses au questionnaire) sont traitées par Bruyère, responsable du traitement, sur la base de votre consentement, dans le seul but de produire et vous envoyer votre rapport de diagnostic et d'assurer le suivi de votre demande. Elles sont hébergées chez nos sous-traitants techniques (Make, Anthropic, Airtable, Google) et ne sont transmises à aucun autre tiers. Elles sont conservées 3&nbsp;ans après notre dernier contact, puis supprimées. Vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition&nbsp;: écrivez à <a href="mailto:bruyere.builder@gmail.com">bruyere.builder@gmail.com</a>. Vous pouvez également adresser une réclamation à la CNIL.</p>
+    </details>
+  </footer>
 </div>
 
 <script>

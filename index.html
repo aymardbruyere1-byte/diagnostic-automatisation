@@ -143,6 +143,12 @@
   .final h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:10px}
   .final p{color:var(--ink-soft);max-width:44ch;margin:0 auto}
 
+  .score-reveal{text-align:center;margin:26px 0 20px}
+  .score-number{font-family:'Space Grotesk',sans-serif;font-size:3.2rem;font-weight:700;color:var(--flux);line-height:1}
+  .score-number span{font-size:1.3rem;color:var(--ink-soft);font-weight:600}
+  .score-profil{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:600;margin-top:8px}
+  .score-teaser{color:var(--ink-soft);font-size:.92rem;text-align:center;max-width:44ch;margin:0 auto 4px}
+
   .hidden{display:none}
 
   footer{
@@ -193,7 +199,19 @@
       <button class="btn primary" id="btnNext" type="button" disabled>Suivant</button>
     </div>
   </div>
-
+<!-- Carte score immédiat -->
+  <div class="card hidden" id="scoreCard">
+    <span class="axe-tag">Votre résultat</span>
+    <div class="score-reveal">
+      <p class="score-number" id="scoreNumber"></p>
+      <p class="score-profil" id="scoreProfil"></p>
+    </div>
+    <p class="score-teaser">Pour recevoir l'analyse détaillée de vos 4 axes et vos 3 recommandations personnalisées, laissez-nous votre email.</p>
+    <div class="nav">
+      <button class="btn ghost" id="btnBackFromScore" type="button">Précédent</button>
+      <button class="btn primary" id="btnToContact" type="button">Voir mon rapport complet</button>
+    </div>
+  </div>
   <!-- Carte contact -->
   <div class="card hidden" id="contactCard">
     <span class="axe-tag">Dernière étape</span>
@@ -357,16 +375,45 @@ function updateRail(activeAxe){
 function next(){
   if(answers[current]===null) return;
   if(current < QUESTIONS.length-1){ current++; render(); }
-  else showContact();
+  else showScoreReveal();
 }
 function prev(){ if(current>0){ current--; render(); } }
 
 btnNext.addEventListener("click",next);
 btnPrev.addEventListener("click",prev);
 
+/* ================= SCORE IMMÉDIAT ================= */
+const scoreCard = document.getElementById("scoreCard");
+
+function showScoreReveal(){
+  const s = computeScores();
+  document.getElementById("scoreNumber").innerHTML = s.score_global + "<span>/100</span>";
+  document.getElementById("scoreProfil").textContent = s.profil;
+  qCard.classList.add("hidden");
+  contactCard.classList.add("hidden");
+  scoreCard.classList.remove("hidden");
+  progressTxt.textContent = "Votre score";
+  document.querySelectorAll(".station").forEach(st=>{
+    const a = parseInt(st.dataset.axe,10);
+    st.classList.remove("active");
+    st.classList.toggle("done", a < 4);
+  });
+  window.scrollTo({top:0});
+}
+document.getElementById("btnBackFromScore").addEventListener("click",()=>{
+  scoreCard.classList.add("hidden");
+  qCard.classList.remove("hidden");
+  render();
+});
+document.getElementById("btnToContact").addEventListener("click",()=>{
+  scoreCard.classList.add("hidden");
+  showContact();
+});
+
 /* ================= CONTACT ================= */
 function showContact(){
   qCard.classList.add("hidden");
+  scoreCard.classList.add("hidden");
   contactCard.classList.remove("hidden");
   progressTxt.textContent = "Dernière étape";
   updateRail(4);
@@ -374,8 +421,7 @@ function showContact(){
 }
 document.getElementById("btnBackQ").addEventListener("click",()=>{
   contactCard.classList.add("hidden");
-  qCard.classList.remove("hidden");
-  render();
+  showScoreReveal();
 });
 
 /* ================= SCORING ================= */

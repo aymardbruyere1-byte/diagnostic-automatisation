@@ -354,11 +354,13 @@ function render(){
     b.addEventListener("click",()=>{
       answers[current]=i;
       render();
+      btnNext.style.visibility = "hidden"; // évite un flash du bouton pendant l'auto-avance
       setTimeout(next, 220); // enchaînement fluide après sélection
     });
     optsDiv.appendChild(b);
   });
   btnPrev.style.visibility = current===0 ? "hidden":"visible";
+  btnNext.style.visibility = answers[current]===null ? "hidden":"visible";
   btnNext.disabled = answers[current]===null;
   progressTxt.innerHTML = "Question <b>"+(current+1)+"</b> / "+QUESTIONS.length;
   updateRail(QUESTIONS[current].axe);
@@ -429,9 +431,9 @@ function computeScores(){
   const axeScores = AXES.map(()=>0);
   const detail = {};
   QUESTIONS.forEach((q,i)=>{
-    const pts = q.opts[answers[i]][1];
+    const pts = q.opts[[i]][1];
     axeScores[q.axe] += pts;
-    detail[q.id] = {question:q.text, reponse:q.opts[answers[i]][0], points:pts};
+    detail[q.id] = {question:q.text, reponse:q.opts[[i]][0], points:pts};
   });
   const total110 = axeScores.reduce((a,b)=>a+b,0);
   const total100 = Math.round(total110*100/110);
@@ -442,8 +444,8 @@ function computeScores(){
   else if(total100 < 80) profil = "Prêt à automatiser";
   else profil = "Prêt à passer à l'échelle";
 
-  const q21pts = QUESTIONS[20].opts[answers[20]][1];
-  const q22pts = QUESTIONS[21].opts[answers[21]][1];
+  const q21pts = QUESTIONS[20].opts[[20]][1];
+  const q22pts = QUESTIONS[21].opts[[21]][1];
   const leadChaud = (total100 >= 60) && (q21pts >= 3) && (q22pts === 5);
 
   return {

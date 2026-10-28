@@ -2,7 +2,7 @@
 
 Outil de diagnostic en ligne évaluant la maturité d'une PME en matière d'automatisation. Le répondant complète un questionnaire de 22 questions, découvre immédiatement son score et son profil, puis reçoit par email un rapport personnalisé : analyse par axe et trois recommandations priorisées générées par IA.
 
-Démo : https://aymardbruyere1-byte.github.io/diagnostic-automatisation/
+Démo : https://diagnostic.bruyereaymard.fr/
 
 ## Parcours du répondant
 

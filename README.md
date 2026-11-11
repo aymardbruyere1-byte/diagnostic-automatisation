@@ -28,7 +28,7 @@ API Claude (génération du rapport personnalisé)
 CRM Airtable (création de la fiche prospect)
         ▼
 Routeur
-        ├─▶ Email de restitution au prospect (Gmail)
+        ├─▶ Email de restitution au prospect (SMTP OVHcloud, contact@bruyereaymard.fr)
         ├─▶ Alertes internes "lead chaud" (push iOS + email)
         └─▶ Alerte interne en cas d'échec de génération
 ```
@@ -51,7 +51,7 @@ Email récapitulatif interne (uniquement s'il y a des anomalies)
 - **Orchestration** : scénario Make déclenché par webhook, en temps réel.
 - **Génération du rapport** : appel à l'API Claude (Anthropic) avec un prompt structuré. La sortie est un JSON strict (synthèse, trois recommandations, objet d'email), parsé avant tout envoi. L'IA rédige, elle ne calcule ni ne modifie aucun score.
 - **CRM** : une fiche Airtable par diagnostic (scores, profil, statut, réponses brutes, rapport généré).
-- **Restitution** : email HTML au prospect. Alertes internes immédiates lorsque le diagnostic répond aux critères de qualification "lead chaud".
+- **Restitution** : email HTML au prospect, envoyé depuis `contact@bruyereaymard.fr` via le SMTP OVHcloud (Zimbra), domaine authentifié SPF, DKIM et DMARC ; réponses dirigées vers la même adresse (Reply-To). Alertes internes immédiates lorsque le diagnostic répond aux critères de qualification "lead chaud".
 - **Supervision** : scénario Make planifié, distinct du scénario principal, qui contrôle quotidiennement le journal d'audit.
 
 ## Robustesse
@@ -73,7 +73,7 @@ Le pipeline est conçu pour ne perdre aucune soumission :
 - **Responsable du traitement** : Bruyère AYMARD (Conseil AMOA & automatisation IA).
 - **Finalités** : production et envoi du rapport de diagnostic ; recontact éventuel au sujet de la demande.
 - **Base légale** : consentement (case à cocher explicite avant soumission), retirable à tout moment.
-- **Destinataires** : le responsable du traitement uniquement. Sous-traitants techniques : Make (orchestration, hébergement UE), Anthropic (rédaction du rapport), Airtable (stockage), Google (génération du PDF et envoi des emails).
+- **Destinataires** : le responsable du traitement uniquement. Sous-traitants techniques : Make (orchestration, hébergement UE), Anthropic (rédaction du rapport), Airtable (stockage), Google (génération du PDF et notifications internes), OVHcloud (envoi des emails au prospect, hébergement en France).
 - **Transferts hors UE** : Anthropic, Airtable et Google sont établis aux États-Unis ; transferts encadrés par les clauses contractuelles types de la Commission européenne.
 - **Conservation** : 3 ans après le dernier contact, puis suppression.
 - **Droits** : accès, rectification, effacement, opposition, limitation, portabilité ; réclamation possible auprès de la CNIL. Toute demande : contact@bruyereaymard.fr
@@ -87,8 +87,9 @@ Le pipeline est conçu pour ne perdre aucune soumission :
 | Make | Deux scénarios : orchestration temps réel (webhook, gestion d'erreurs, journal d'audit) et supervision planifiée (contrôle quotidien du journal) |
 | Claude API (Anthropic) | Génération du rapport personnalisé |
 | Airtable | CRM |
-| Gmail | Emails transactionnels et alertes |
+| OVHcloud Zimbra (SMTP) | Emails au prospect, depuis contact@bruyereaymard.fr |
+| Gmail | Alertes et notifications internes |
 
 ## Auteur
 
-Conçu et opéré par Bruyère · Conseil AMOA & automatisation IA.
+Conçu et opéré par Bruyère AYMARD · Conseil AMOA & automatisation IA.

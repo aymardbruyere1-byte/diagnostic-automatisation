@@ -70,12 +70,14 @@ Le pipeline est conçu pour ne perdre aucune soumission :
 ## Données personnelles (RGPD)
 
 - **Données collectées** : nom, entreprise, email professionnel, réponses au questionnaire.
-- **Finalité** : production et envoi du rapport de diagnostic ; qualification commerciale des demandes.
-- **Base légale** : consentement (case à cocher explicite avant soumission).
-- **Destinataires** : le responsable du traitement uniquement. Sous-traitants techniques : Make (orchestration, hébergement UE), Anthropic (génération du rapport), Airtable (stockage), Google (envoi des emails).
+- **Responsable du traitement** : Bruyère AYMARD (Conseil AMOA & automatisation IA).
+- **Finalités** : production et envoi du rapport de diagnostic ; recontact éventuel au sujet de la demande.
+- **Base légale** : consentement (case à cocher explicite avant soumission), retirable à tout moment.
+- **Destinataires** : le responsable du traitement uniquement. Sous-traitants techniques : Make (orchestration, hébergement UE), Anthropic (rédaction du rapport), Airtable (stockage), Google (génération du PDF et envoi des emails).
+- **Transferts hors UE** : Anthropic, Airtable et Google sont établis aux États-Unis ; transferts encadrés par les clauses contractuelles types de la Commission européenne.
 - **Conservation** : 3 ans après le dernier contact, puis suppression.
-- **Droits** : accès, rectification, effacement, opposition. Toute demande : bruyere.builder@gmail.com
-- La mention d'information complète figure en pied de page du formulaire.
+- **Droits** : accès, rectification, effacement, opposition, limitation, portabilité ; réclamation possible auprès de la CNIL. Toute demande : contact@bruyereaymard.fr
+- **Information en deux niveaux** : texte complet en pied de page du formulaire (ancre `#donnees`) et dans le rapport PDF ; mention courte dans l'email, avec renvoi vers le texte complet.
 
 ## Stack
 

@@ -235,7 +235,7 @@
     </div>
     <div class="consent">
       <input type="checkbox" id="fConsent">
-      <label for="fConsent">J'accepte de recevoir mon rapport de diagnostic par email. Mes réponses ne sont utilisées que pour produire ce rapport.</label>
+      <label for="fConsent">J'accepte que mes informations soient utilisées pour produire et recevoir mon rapport de diagnostic par email, et pour être recontacté(e) au sujet de ma demande. <a href="#donnees">En savoir plus sur la protection de mes données</a>.</label>
     </div>
     <p class="error-msg" id="errMsg"></p>
     <div class="nav">
@@ -255,9 +255,12 @@
 
  <footer>
     Diagnostic conçu et opéré par Bruyère · Conseil AMOA &amp; automatisation IA
-    <details class="rgpd">
+    <details class="rgpd" id="donnees">
       <summary>Protection de vos données</summary>
-      <p>Les informations recueillies (nom, entreprise, email, réponses au questionnaire) sont traitées par Bruyère, responsable du traitement, sur la base de votre consentement, dans le seul but de produire et vous envoyer votre rapport de diagnostic et d'assurer le suivi de votre demande. Elles sont hébergées chez nos sous-traitants techniques (Make, Anthropic, Airtable, Google) et ne sont transmises à aucun autre tiers. Elles sont conservées 3&nbsp;ans après notre dernier contact, puis supprimées. Vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition&nbsp;: écrivez à <a href="mailto:bruyere.builder@gmail.com">bruyere.builder@gmail.com</a>. Vous pouvez également adresser une réclamation à la CNIL.</p>
+      <p>Bruyère AYMARD (Conseil AMOA &amp; automatisation IA) est responsable du traitement des informations recueillies via ce formulaire de diagnostic (nom, entreprise, email, réponses au questionnaire). Elles servent à produire et à vous envoyer votre rapport de diagnostic, puis, le cas échéant, à vous recontacter au sujet de votre demande. Ce traitement repose sur votre consentement, que vous pouvez retirer à tout moment, sans remettre en cause les traitements déjà effectués.</p>
+      <p>Vos données sont traitées par nos sous-traitants techniques&nbsp;: Make (orchestration), Anthropic (rédaction du rapport), Airtable (stockage) et Google (génération du PDF et envoi des emails). Elles ne sont transmises à aucun autre tiers. Certains de ces prestataires sont établis aux États-Unis&nbsp;: ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne.</p>
+      <p>Vos données sont conservées 3&nbsp;ans après notre dernier contact, puis supprimées.</p>
+      <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, d'opposition et de limitation du traitement, ainsi que d'un droit à la portabilité de vos données&nbsp;: écrivez à <a href="mailto:contact@bruyereaymard.fr">contact@bruyereaymard.fr</a>. Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
     </details>
   </footer>
 </div>
@@ -531,7 +534,17 @@ function showSuccess(){
   progressTxt.textContent = "";
 }
 
+// Ouvre la section « Protection de vos données » quand on arrive via #donnees (lien email, case de consentement)
+function openDataSection(){
+  if(location.hash === "#donnees"){
+    const d = document.getElementById("donnees");
+    if(d){ d.open = true; d.scrollIntoView({behavior:"smooth", block:"start"}); }
+  }
+}
+window.addEventListener("hashchange", openDataSection);
+
 render();
+openDataSection();
 </script>
 </body>
 </html>
